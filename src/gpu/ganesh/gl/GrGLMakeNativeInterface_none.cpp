@@ -7,4 +7,9 @@
 
 #include "include/gpu/gl/GrGLInterface.h"
 
-sk_sp<const GrGLInterface> GrGLMakeNativeInterface() { return nullptr; }
+#include <iostream>
+
+sk_sp<const GrGLInterface> GrGLMakeNativeInterface() {
+  std::cout << "cannot find nativeinterface!" << std::endl;
+  return nullptr;
+}

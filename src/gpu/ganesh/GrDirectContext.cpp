@@ -5,6 +5,7 @@
  * found in the LICENSE file.
  */
 
+#include <iostream>
 
 #include "include/gpu/GrDirectContext.h"
 
@@ -228,6 +229,7 @@ bool GrDirectContext::init() {
     SkASSERT(this->getTextBlobRedrawCoordinator());
     SkASSERT(this->threadSafeCache());
 
+
     fStrikeCache = std::make_unique<StrikeCache>();
     fResourceCache = std::make_unique<GrResourceCache>(this->singleOwner(),
                                                        this->directContextID(),
@@ -250,6 +252,7 @@ bool GrDirectContext::init() {
     if (this->options().fExecutor) {
         fTaskGroup = std::make_unique<SkTaskGroup>(*this->options().fExecutor);
     }
+
 
     fPersistentCache = this->options().fPersistentCache;
 
@@ -1055,6 +1058,9 @@ sk_sp<GrDirectContext> GrDirectContext::MakeGL(sk_sp<const GrGLInterface> glInte
     }
 #endif
     direct->fGpu = GrGLGpu::Make(std::move(glInterface), options, direct.get());
+    if (!direct->fGpu) {
+      std::cout << "cannot make grglgpu" << std::endl;
+    }
     if (!direct->init()) {
         return nullptr;
     }

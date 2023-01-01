@@ -26,7 +26,9 @@ import("gn/ios.gni")
 
 # Skia public API, generally provided by :skia.
 config("skia_public") {
-  include_dirs = [ "." ]
+  include_dirs = [ ".", "../Zombie/include", "../libassert/include" ]
+  lib_dirs = ["../Zombie/build", "../libassert/bin"]
+  libs = [ "ZombieLib", "assert", "glfw" ]
 
   defines = []
   cflags_objcc = []
@@ -3381,4 +3383,14 @@ if (is_ios && skia_enable_skottie && !skia_enable_flutter_defines) {
   group("skottie_ios") {
     deps = [ "tools/skottie_ios_app" ]
   }
+}
+
+test_app("zombie") {
+  sources = ["zombie/zombie.cpp"]
+  deps = [
+    ":skia",
+    ":flags",
+    ":trace",
+    ":tool_utils"
+  ]
 }

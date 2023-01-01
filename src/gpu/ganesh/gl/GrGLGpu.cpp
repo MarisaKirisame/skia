@@ -44,6 +44,7 @@
 #include "src/sksl/SkSLCompiler.h"
 
 #include <cmath>
+#include <iostream>
 #include <memory>
 
 #define GL_CALL(X) GR_GL_CALL(this->glInterface(), X)
@@ -356,6 +357,7 @@ sk_sp<GrGpu> GrGLGpu::Make(sk_sp<const GrGLInterface> interface, const GrContext
     if (!interface) {
         interface = GrGLMakeNativeInterface();
         if (!interface) {
+            std::cout << "makenativeinterface failed" << std::endl;
             return nullptr;
         }
     }

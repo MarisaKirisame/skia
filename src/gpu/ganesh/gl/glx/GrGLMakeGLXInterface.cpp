@@ -13,6 +13,8 @@
 #define GLX_GLXEXT_PROTOTYPES 1
 #include <GL/glx.h>
 
+#include <iostream>
+
 static GrGLFuncPtr glx_get(void* ctx, const char name[]) {
     // Avoid calling glXGetProcAddress() for EGL procs.
     // We don't expect it to ever succeed, but somtimes it returns non-null anyway.
@@ -27,6 +29,7 @@ static GrGLFuncPtr glx_get(void* ctx, const char name[]) {
 
 sk_sp<const GrGLInterface> GrGLMakeGLXInterface() {
     if (nullptr == glXGetCurrentContext()) {
+        std::cout << "glXGetCurrentContext failed" << std::endl;
         return nullptr;
     }
 
