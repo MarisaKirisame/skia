@@ -1,0 +1,19 @@
+automated testing:
+generate png file, and check they are the same.
+
+hook plan:
+hook vertexbuffer. it will be used by executing shader, so we also have to hook that as well.
+
+problem:
+the opengl api is very imperative (e.g. bindStuff), which make overloading very hard
+
+solution:
+wrap it around a layer which call all the bindStuff at once. this way if we forget one it will be an error.
+
+there is ResourceCacheTest, which I should read.
+
+the codebase is extensible by backend, but not further.
+look like the codebase use lots of static_cast, so it seems hopeless to touch one of them, and wish to leave other part alone.
+
+on the bright side, look like we can create a 'zombie backend' that is generic over backend.
+but for now, lets only create a zombie opengl backend. i am not confident that their code is good enough to support this with little pain.
