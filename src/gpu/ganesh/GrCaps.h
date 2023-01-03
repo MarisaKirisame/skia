@@ -530,7 +530,6 @@ public:
     virtual std::vector<TestFormatColorTypeCombination> getTestingCombinations() const = 0;
 #endif
 
-protected:
     // Subclasses must call this at the end of their init method in order to do final processing on
     // the caps (including overrides requested by the client).
     // NOTE: this method will only reduce the caps, never expand them.
@@ -618,7 +617,6 @@ protected:
 
     GrDriverBugWorkarounds fDriverBugWorkarounds;
 
-private:
     void applyOptionsOverrides(const GrContextOptions& options);
 
     virtual void onApplyOptionsOverrides(const GrContextOptions&) {}

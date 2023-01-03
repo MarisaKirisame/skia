@@ -29,6 +29,22 @@ GrRenderTarget::GrRenderTarget(GrGpu* gpu,
     }
 }
 
+GrAttachment* GrRenderTarget::getStencilAttachment(bool useMSAASurface) const {
+  return getStencilAttachmentRefCnt(useMSAASurface).get();
+}
+
+GrAttachment* GrRenderTarget::getStencilAttachment() const {
+  return getStencilAttachment(this->numSamples() > 1);
+}
+
+sk_sp<GrAttachment> GrRenderTarget::getStencilAttachmentRefCnt(bool useMSAASurface) const {
+    return useMSAASurface ? fMSAAStencilAttachment : fStencilAttachment;
+}
+
+sk_sp<GrAttachment> GrRenderTarget::getStencilAttachmentRefCnt() const {
+    return getStencilAttachmentRefCnt(this->numSamples() > 1);
+}
+
 GrRenderTarget::~GrRenderTarget() = default;
 
 void GrRenderTarget::onRelease() {

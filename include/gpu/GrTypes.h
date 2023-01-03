@@ -105,6 +105,7 @@ enum class GrBackendApi : unsigned {
      * GrBackend::kOpenGL_GrBackend.
      */
     kOpenGL_GrBackend = kOpenGL,
+    kZombieGL,
 };
 
 /**

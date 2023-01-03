@@ -41,13 +41,13 @@ public:
 
     virtual GrBackendRenderTarget getBackendRenderTarget() const = 0;
 
-    GrAttachment* getStencilAttachment(bool useMSAASurface) const {
-        return (useMSAASurface) ? fMSAAStencilAttachment.get() : fStencilAttachment.get();
-    }
+    GrAttachment* getStencilAttachment(bool useMSAASurface) const;
 
-    GrAttachment* getStencilAttachment() const {
-        return getStencilAttachment(this->numSamples() > 1);
-    }
+    GrAttachment* getStencilAttachment() const;
+
+    sk_sp<GrAttachment> getStencilAttachmentRefCnt(bool useMSAASurface) const;
+
+    sk_sp<GrAttachment> getStencilAttachmentRefCnt() const;
 
     // Checked when this object is asked to attach a stencil buffer.
     virtual bool canAttemptStencilAttachment(bool useMSAASurface) const = 0;
@@ -69,7 +69,6 @@ public:
      */
     const SkTArray<SkPoint>& getSampleLocations();
 
-protected:
     GrRenderTarget(GrGpu*,
                    const SkISize&,
                    int sampleCount,
@@ -82,7 +81,6 @@ protected:
     void onAbandon() override;
     void onRelease() override;
 
-private:
     // Allows the backends to perform any additional work that is required for attaching a
     // GrAttachment. When this is called, the GrAttachment has already been put onto
     // the GrRenderTarget. This function must return false if any failures occur when completing the

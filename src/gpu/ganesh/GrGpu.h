@@ -669,7 +669,6 @@ public:
     // Called before certain draws in order to guarantee coherent results from dst reads.
     virtual void xferBarrier(GrRenderTarget*, GrXferBarrierType) = 0;
 
-protected:
     static bool CompressedDataIsCorrect(SkISize dimensions,
                                         SkImage::CompressionType,
                                         GrMipmapped,
@@ -687,7 +686,6 @@ protected:
     // Subclass must call this to initialize caps & compiler in its constructor.
     void initCapsAndCompiler(sk_sp<const GrCaps> caps);
 
-private:
     virtual GrBackendTexture onCreateBackendTexture(SkISize dimensions,
                                                     const GrBackendFormat&,
                                                     GrRenderable,

@@ -75,7 +75,6 @@ protected:
 
     void computeScratchKey(skgpu::ScratchKey*) const override;
 
-private:
     size_t onGpuMemorySize() const override;
 
     GrTextureType                 fTextureType;

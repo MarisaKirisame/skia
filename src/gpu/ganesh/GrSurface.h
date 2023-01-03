@@ -90,7 +90,6 @@ public:
         fSurfaceFlags |= GrInternalSurfaceFlags::kFramebufferOnly;
     }
 
-protected:
     void setGLRTFBOIDIs0() {
         SkASSERT(!this->requiresManualMSAAResolve());
         SkASSERT(!this->asTexture());
@@ -137,7 +136,6 @@ protected:
     void onRelease() override;
     void onAbandon() override;
 
-private:
     const char* getResourceType() const override { return "Surface"; }
 
     // Unmanaged backends (e.g. Vulkan) may want to specially handle the release proc in order to

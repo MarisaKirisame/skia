@@ -60,6 +60,10 @@ public:
     static sk_sp<GrDirectContext> MakeGL(sk_sp<const GrGLInterface>);
     static sk_sp<GrDirectContext> MakeGL(const GrContextOptions&);
     static sk_sp<GrDirectContext> MakeGL();
+    static sk_sp<GrDirectContext> MakeZombieGL(sk_sp<const GrGLInterface>, const GrContextOptions&);
+    static sk_sp<GrDirectContext> MakeZombieGL(sk_sp<const GrGLInterface>);
+    static sk_sp<GrDirectContext> MakeZombieGL(const GrContextOptions&);
+    static sk_sp<GrDirectContext> MakeZombieGL();
 #endif
 
 #ifdef SK_VULKAN

@@ -28,6 +28,8 @@
 #include "src/gpu/ganesh/GrTexture.h"
 #include "src/gpu/ganesh/SkGr.h"
 
+#include <iostream>
+
 const int GrResourceProvider::kMinScratchTextureSize = 16;
 
 #define ASSERT_SINGLE_OWNER SKGPU_ASSERT_SINGLE_OWNER(fSingleOwner)
@@ -101,18 +103,21 @@ sk_sp<GrTexture> GrResourceProvider::createTexture(SkISize dimensions,
             return nullptr;
         }
     }
-    return fGpu->createTexture(dimensions,
-                               format,
-                               textureType,
-                               renderable,
-                               renderTargetSampleCnt,
-                               budgeted,
-                               isProtected,
-                               colorType,
-                               tempColorType,
-                               tmpTexels.get(),
-                               numMipLevels,
-                               label);
+    std::cout << "calling creatTexture!" << std::endl;
+    auto ret = fGpu->createTexture(dimensions,
+                                   format,
+                                   textureType,
+                                   renderable,
+                                   renderTargetSampleCnt,
+                                   budgeted,
+                                   isProtected,
+                                   colorType,
+                                   tempColorType,
+                                   tmpTexels.get(),
+                                   numMipLevels,
+                                   label);
+    std::cout << "creatTexture ok!" << std::endl;
+    return ret;
 }
 
 sk_sp<GrTexture> GrResourceProvider::getExactScratch(SkISize dimensions,
@@ -249,15 +254,18 @@ sk_sp<GrTexture> GrResourceProvider::createTexture(SkISize dimensions,
         return tex;
     }
 
-    return fGpu->createTexture(dimensions,
-                               format,
-                               textureType,
-                               renderable,
-                               renderTargetSampleCnt,
-                               mipmapped,
-                               budgeted,
-                               isProtected,
-                               label);
+    std::cout << "calling creatTexture!" << std::endl;
+    auto ret = fGpu->createTexture(dimensions,
+                                   format,
+                                   textureType,
+                                   renderable,
+                                   renderTargetSampleCnt,
+                                   mipmapped,
+                                   budgeted,
+                                   isProtected,
+                                   label);
+    std::cout << "creatTexture ok!" << std::endl;
+    return ret;
 }
 
 // Map 'value' to a larger multiple of 2. Values <= 'kMagicTol' will pop up to
@@ -319,15 +327,18 @@ sk_sp<GrTexture> GrResourceProvider::createApproxTexture(SkISize dimensions,
         return tex;
     }
 
-    return fGpu->createTexture(copyDimensions,
-                               format,
-                               textureType,
-                               renderable,
-                               renderTargetSampleCnt,
-                               GrMipmapped::kNo,
-                               SkBudgeted::kYes,
-                               isProtected,
-                               label);
+    std::cout << "calling creatTexture!" << std::endl;
+    auto ret = fGpu->createTexture(copyDimensions,
+                                   format,
+                                   textureType,
+                                   renderable,
+                                   renderTargetSampleCnt,
+                                   GrMipmapped::kNo,
+                                   SkBudgeted::kYes,
+                                   isProtected,
+                                   label);
+    std::cout << "creatTexture ok!" << std::endl;
+    return ret;
 }
 
 sk_sp<GrTexture> GrResourceProvider::findAndRefScratchTexture(const skgpu::ScratchKey& key,
