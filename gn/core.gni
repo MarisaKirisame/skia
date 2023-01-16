@@ -485,6 +485,7 @@ skia_core_sources = [
   "$_src/image/SkImage_Lazy.cpp",
   "$_src/image/SkImage_Lazy.h",
   "$_src/image/SkImage_Raster.cpp",
+  "$_src/image/SkImage_Zombie.cpp",
   "$_src/image/SkReadPixelsRec.h",
   "$_src/image/SkRescaleAndReadPixels.cpp",
   "$_src/image/SkRescaleAndReadPixels.h",

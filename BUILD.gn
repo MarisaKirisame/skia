@@ -26,7 +26,9 @@ import("gn/ios.gni")
 
 # Skia public API, generally provided by :skia.
 config("skia_public") {
-  include_dirs = [ "." ]
+  include_dirs = [ ".", "../Zombie/include", "../libassert/include" ]
+  lib_dirs = ["../Zombie/build", "../libassert/bin" ]
+  libs = [ "ZombieLib", "assert" ]
 
   defines = []
   cflags_objcc = []

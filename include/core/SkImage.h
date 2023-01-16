@@ -75,12 +75,23 @@ enum class Volatile : bool;
     include BMP, GIF, HEIF, ICO, JPEG, PNG, WBMP, WebP. Supported encoding details
     vary with platform.
 */
+class SkZombieImage;
 class SK_API SkImage : public SkRefCnt {
 public:
+  virtual bool isZombie() const {
+    return false;
+  }
+  virtual const SkZombieImage* asZombie() const {
+    return nullptr;
+  }
 
-    /** Caller data passed to RasterReleaseProc; may be nullptr.
-    */
-    typedef void* ReleaseContext;
+  static sk_sp<SkImage> MakeZombie(sk_sp<SkImage>&& img);
+
+  static sk_sp<SkImage> MapZombie(const std::function<sk_sp<SkImage>(const std::vector<sk_sp<SkImage>>&)>&, std::vector<sk_sp<SkImage>>&&);
+  /** Caller data passed to RasterReleaseProc; may be nullptr.
+   */
+  typedef void* ReleaseContext;
+
 
     /** Creates SkImage from SkPixmap and copy of pixels. Since pixels are copied, SkPixmap
         pixels may be modified or deleted without affecting SkImage.

@@ -114,7 +114,8 @@ sk_sp<SkImage> SkAnimCodecPlayer::getFrameAt(int index) {
         return nullptr;
     }
 
-    auto image = SkImage::MakeRasterData(imageInfo, std::move(data), rb);
+    // for now, let's not do anything funny with codec, since this is being loaded from files.
+    auto image = SkImage::MakeZombie(SkImage::MakeRasterData(imageInfo, std::move(data), rb));
     if (origin != kDefault_SkEncodedOrigin) {
         imageInfo = imageInfo.makeDimensions(orientedDims);
         rb = imageInfo.minRowBytes();

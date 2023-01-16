@@ -316,17 +316,17 @@ sk_sp<SkImage> SkImage::MakeRasterCopy(const SkPixmap& pmap) {
 
 sk_sp<SkImage> SkImage::MakeRasterData(const SkImageInfo& info, sk_sp<SkData> data,
                                        size_t rowBytes) {
-    size_t size;
-    if (!SkImage_Raster::ValidArgs(info, rowBytes, &size) || !data) {
-        return nullptr;
-    }
+  size_t size;
+  if (!SkImage_Raster::ValidArgs(info, rowBytes, &size) || !data) {
+    return nullptr;
+  }
 
-    // did they give us enough data?
-    if (data->size() < size) {
-        return nullptr;
-    }
+  // did they give us enough data?
+  if (data->size() < size) {
+    return nullptr;
+  }
 
-    return sk_make_sp<SkImage_Raster>(info, std::move(data), rowBytes);
+  return sk_make_sp<SkImage_Raster>(info, std::move(data), rowBytes);
 }
 
 // TODO: this could be improved to decode and make use of the mipmap

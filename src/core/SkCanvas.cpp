@@ -50,6 +50,7 @@
 #include "src/image/SkSurface_Base.h"
 #include "src/text/GlyphRun.h"
 #include "src/utils/SkPatchUtils.h"
+#include "src/image/SkImage_Zombie.h"
 
 #include <memory>
 #include <new>
@@ -2267,54 +2268,62 @@ static SkPaint clean_paint_for_drawVertices(SkPaint paint) {
     return paint;
 }
 
+inline void BindZombie(const std::function<void(const SkImage*)>& func, const SkImage* image) {
+  SkASSERT(image->isZombie());
+  func(image->asZombie()->image.get_value().get());
+}
+
 void SkCanvas::onDrawImage2(const SkImage* image, SkScalar x, SkScalar y,
                             const SkSamplingOptions& sampling, const SkPaint* paint) {
+  auto impl = [&](const SkImage* image) {
     SkPaint realPaint = clean_paint_for_drawImage(paint);
 
     SkRect bounds = SkRect::MakeXYWH(x, y, image->width(), image->height());
     if (this->internalQuickReject(bounds, realPaint)) {
-        return;
+      return;
     }
 
     if (realPaint.getImageFilter() &&
         this->canDrawBitmapAsSprite(x, y, image->width(), image->height(), sampling, realPaint) &&
         !image_to_color_filter(&realPaint)) {
-        // Evaluate the image filter directly on the input image and then draw the result, instead
-        // of first drawing the image to a temporary layer and filtering.
-        SkBaseDevice* device = this->topDevice();
-        sk_sp<SkSpecialImage> special;
-        if ((special = device->makeSpecial(image))) {
-            sk_sp<SkImageFilter> filter = realPaint.refImageFilter();
-            realPaint.setImageFilter(nullptr);
+      // Evaluate the image filter directly on the input image and then draw the result, instead
+      // of first drawing the image to a temporary layer and filtering.
+      SkBaseDevice* device = this->topDevice();
+      sk_sp<SkSpecialImage> special;
+      if ((special = device->makeSpecial(image))) {
+        sk_sp<SkImageFilter> filter = realPaint.refImageFilter();
+        realPaint.setImageFilter(nullptr);
 
-            // TODO(michaelludwig) - Many filters could probably be evaluated like this even if the
-            // CTM is not translate-only; the post-transformation of the filtered image by the CTM
-            // will probably look just as good and not require an extra layer.
-            // TODO(michaelludwig) - Once image filter implementations can support source images
-            // with non-(0,0) origins, we can just mark the origin as (x,y) instead of doing a
-            // pre-concat here.
-            SkMatrix layerToDevice = device->localToDevice();
-            layerToDevice.preTranslate(x, y);
+        // TODO(michaelludwig) - Many filters could probably be evaluated like this even if the
+        // CTM is not translate-only; the post-transformation of the filtered image by the CTM
+        // will probably look just as good and not require an extra layer.
+        // TODO(michaelludwig) - Once image filter implementations can support source images
+        // with non-(0,0) origins, we can just mark the origin as (x,y) instead of doing a
+        // pre-concat here.
+        SkMatrix layerToDevice = device->localToDevice();
+        layerToDevice.preTranslate(x, y);
 
-            SkMatrix deviceToLayer;
-            if (!layerToDevice.invert(&deviceToLayer)) {
-                return; // bad ctm, draw nothing
-            }
+        SkMatrix deviceToLayer;
+        if (!layerToDevice.invert(&deviceToLayer)) {
+          return; // bad ctm, draw nothing
+        }
 
-            skif::Mapping mapping(layerToDevice, deviceToLayer, SkMatrix::Translate(-x, -y));
+        skif::Mapping mapping(layerToDevice, deviceToLayer, SkMatrix::Translate(-x, -y));
 
-            if (this->predrawNotify()) {
-                device->drawFilteredImage(mapping, special.get(), filter.get(), sampling,realPaint);
-            }
-            return;
-        } // else fall through to regular drawing path
+        if (this->predrawNotify()) {
+          device->drawFilteredImage(mapping, special.get(), filter.get(), sampling,realPaint);
+        }
+        return;
+      } // else fall through to regular drawing path
     }
 
     auto layer = this->aboutToDraw(this, realPaint, &bounds);
     if (layer) {
-        this->topDevice()->drawImageRect(image, nullptr, bounds, sampling,
-                                         layer->paint(), kFast_SrcRectConstraint);
+      this->topDevice()->drawImageRect(image, nullptr, bounds, sampling,
+                                       layer->paint(), kFast_SrcRectConstraint);
     }
+  };
+  BindZombie(impl, image);
 }
 
 static SkSamplingOptions clean_sampling_for_constraint(
@@ -2334,33 +2343,39 @@ static SkSamplingOptions clean_sampling_for_constraint(
 void SkCanvas::onDrawImageRect2(const SkImage* image, const SkRect& src, const SkRect& dst,
                                 const SkSamplingOptions& sampling, const SkPaint* paint,
                                 SrcRectConstraint constraint) {
+  auto impl = [&](const SkImage* image) {
     SkPaint realPaint = clean_paint_for_drawImage(paint);
     SkSamplingOptions realSampling = clean_sampling_for_constraint(sampling, constraint);
 
     if (this->internalQuickReject(dst, realPaint)) {
-        return;
+      return;
     }
 
     auto layer = this->aboutToDraw(this, realPaint, &dst, CheckForOverwrite::kYes,
                                    image->isOpaque() ? kOpaque_ShaderOverrideOpacity
-                                                     : kNotOpaque_ShaderOverrideOpacity);
+                                   : kNotOpaque_ShaderOverrideOpacity);
     if (layer) {
-        this->topDevice()->drawImageRect(image, &src, dst, realSampling, layer->paint(), constraint);
+      this->topDevice()->drawImageRect(image, &src, dst, realSampling, layer->paint(), constraint);
     }
+  };
+  BindZombie(impl, image);
 }
 
 void SkCanvas::onDrawImageLattice2(const SkImage* image, const Lattice& lattice, const SkRect& dst,
                                    SkFilterMode filter, const SkPaint* paint) {
+  auto impl = [&](const SkImage* image) {
     SkPaint realPaint = clean_paint_for_drawImage(paint);
 
     if (this->internalQuickReject(dst, realPaint)) {
-        return;
+      return;
     }
 
     auto layer = this->aboutToDraw(this, realPaint, &dst);
     if (layer) {
-        this->topDevice()->drawImageLattice(image, lattice, dst, filter, layer->paint());
+      this->topDevice()->drawImageLattice(image, lattice, dst, filter, layer->paint());
     }
+  };
+  BindZombie(impl, image);
 }
 
 void SkCanvas::drawImage(const SkImage* image, SkScalar x, SkScalar y,

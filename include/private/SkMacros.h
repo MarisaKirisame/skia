@@ -8,6 +8,7 @@
 #define SkMacros_DEFINED
 
 #include <type_traits>
+#include <iostream>
 
 /*
  *  Usage:  SK_MACRO_CONCAT(a, b)   to construct the symbol ab
@@ -92,5 +93,18 @@ extern "C" {
     \
     friend X operator &(X a, X b); \
     friend X& operator &=(X& a, X b);
+
+#include <iostream>
+#define Error(msg) {               \
+    std::cout << msg << std::endl; \
+    SkASSERT(false);               \
+    while (true) { }               \
+  }
+
+#define NotImplemented() Error("function not implemented!")
+
+#define AccessForbidden() Error("access forbidden.")
+
+#define NotSupported() Error("not supported.")
 
 #endif  // SkMacros_DEFINED
