@@ -95,16 +95,16 @@ extern "C" {
     friend X& operator &=(X& a, X b);
 
 #include <iostream>
-#define Error(msg) {               \
+#define ZombieError(msg) {         \
     std::cout << msg << std::endl; \
     SkASSERT(false);               \
     while (true) { }               \
   }
 
-#define NotImplemented() Error("function not implemented!")
+#define ZombieNotImplemented() Error("function not implemented!")
 
-#define AccessForbidden() Error("access forbidden.")
+#define ZombieAccessForbidden() Error("access forbidden.")
 
-#define NotSupported() Error("not supported.")
+#define ZombieNotSupported() Error("not supported.")
 
 #endif  // SkMacros_DEFINED
